@@ -8,7 +8,7 @@ class ServerHandler {
   final String _clientSecret;
   ServerHandler(this._clientId, this._clientSecret);
   late HttpServer _server;
-  final int _port = 4041;
+  final int _port = 4040;
   String _accessTokenUrl = 'https://github.com/login/oauth/access_token';
   Future<HttpServer> createServer() async {
     final address = InternetAddress.loopbackIPv4;
@@ -91,8 +91,7 @@ class ServerHandler {
         }
 
         if (tokenObject.containsKey('access_token')) {
-          final token =
-              UniqueToken.instance.tokenModel(tokenObject);
+          UniqueToken.instance.tokenModel(tokenObject);
           request.response
             ..write('''
             <h1> Autenticação realizada com sucesso! </h1>
