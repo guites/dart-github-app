@@ -7,8 +7,16 @@ part of 'serializers.dart';
 // **************************************************************************
 
 Serializers _$serializers = (new Serializers().toBuilder()
+      ..add(Issue.serializer)
+      ..add(Label.serializer)
       ..add(Repository.serializer)
       ..add(User.serializer)
+      ..addBuilderFactory(
+          const FullType(BuiltList, const [const FullType(Label)]),
+          () => new ListBuilder<Label>())
+      ..addBuilderFactory(
+          const FullType(BuiltList, const [const FullType(User)]),
+          () => new ListBuilder<User>())
       ..addBuilderFactory(
           const FullType(BuiltList, const [const FullType(String)]),
           () => new ListBuilder<String>())

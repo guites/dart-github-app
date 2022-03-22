@@ -15,7 +15,7 @@ abstract class Repository implements Built<Repository, RepositoryBuilder> {
   User get owner; // instace of User model
   bool get private;
   String get html_url;
-  String get description;
+  String? get description;
   bool get fork;
   String get url;
   String get archive_url;

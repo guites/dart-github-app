@@ -4,9 +4,11 @@ import 'package:built_value/serializer.dart';
 
 import 'repository_model.dart';
 import 'user_model.dart';
+import 'issue_model.dart';
+import 'label_model.dart';
 
 part 'serializers.g.dart';
 
-@SerializersFor([Repository])
+@SerializersFor([Repository, User, Issue])
 final Serializers serializers =
     (_$serializers.toBuilder()..addPlugin(StandardJsonPlugin())).build();

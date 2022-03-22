@@ -29,9 +29,9 @@ abstract class User implements Built<User, UserBuilder> {
   User._();
   factory User([void Function(UserBuilder)? updates]) = _$User;
 
-  static User? fromJson(String jsonString) {
+  static User fromJson(String jsonString) {
     return serializers.deserializeWith(
-        User.serializer, json.decode(jsonString));
+        User.serializer, json.decode(jsonString))!;
   }
 
   static Serializer<User> get serializer => _$userSerializer;

@@ -36,9 +36,6 @@ class _$RepositorySerializer implements StructuredSerializer<Repository> {
       'html_url',
       serializers.serialize(object.html_url,
           specifiedType: const FullType(String)),
-      'description',
-      serializers.serialize(object.description,
-          specifiedType: const FullType(String)),
       'fork',
       serializers.serialize(object.fork, specifiedType: const FullType(bool)),
       'url',
@@ -238,6 +235,13 @@ class _$RepositorySerializer implements StructuredSerializer<Repository> {
           specifiedType: const FullType(int)),
     ];
     Object? value;
+    value = object.description;
+    if (value != null) {
+      result
+        ..add('description')
+        ..add(serializers.serialize(value,
+            specifiedType: const FullType(String)));
+    }
     value = object.mirror_url;
     if (value != null) {
       result
@@ -364,7 +368,7 @@ class _$RepositorySerializer implements StructuredSerializer<Repository> {
           break;
         case 'description':
           result.description = serializers.deserialize(value,
-              specifiedType: const FullType(String)) as String;
+              specifiedType: const FullType(String)) as String?;
           break;
         case 'fork':
           result.fork = serializers.deserialize(value,
@@ -705,7 +709,7 @@ class _$Repository extends Repository {
   @override
   final String html_url;
   @override
-  final String description;
+  final String? description;
   @override
   final bool fork;
   @override
@@ -874,7 +878,7 @@ class _$Repository extends Repository {
       required this.owner,
       required this.private,
       required this.html_url,
-      required this.description,
+      this.description,
       required this.fork,
       required this.url,
       required this.archive_url,
@@ -961,8 +965,6 @@ class _$Repository extends Repository {
     BuiltValueNullFieldError.checkNotNull(owner, 'Repository', 'owner');
     BuiltValueNullFieldError.checkNotNull(private, 'Repository', 'private');
     BuiltValueNullFieldError.checkNotNull(html_url, 'Repository', 'html_url');
-    BuiltValueNullFieldError.checkNotNull(
-        description, 'Repository', 'description');
     BuiltValueNullFieldError.checkNotNull(fork, 'Repository', 'fork');
     BuiltValueNullFieldError.checkNotNull(url, 'Repository', 'url');
     BuiltValueNullFieldError.checkNotNull(
@@ -1811,8 +1813,7 @@ class RepositoryBuilder implements Builder<Repository, RepositoryBuilder> {
                   private, 'Repository', 'private'),
               html_url: BuiltValueNullFieldError.checkNotNull(
                   html_url, 'Repository', 'html_url'),
-              description: BuiltValueNullFieldError.checkNotNull(
-                  description, 'Repository', 'description'),
+              description: description,
               fork: BuiltValueNullFieldError.checkNotNull(
                   fork, 'Repository', 'fork'),
               url: BuiltValueNullFieldError.checkNotNull(
@@ -1821,8 +1822,10 @@ class RepositoryBuilder implements Builder<Repository, RepositoryBuilder> {
                   archive_url, 'Repository', 'archive_url'),
               assignees_url: BuiltValueNullFieldError.checkNotNull(
                   assignees_url, 'Repository', 'assignees_url'),
-              blobs_url: BuiltValueNullFieldError.checkNotNull(blobs_url, 'Repository', 'blobs_url'),
-              branches_url: BuiltValueNullFieldError.checkNotNull(branches_url, 'Repository', 'branches_url'),
+              blobs_url: BuiltValueNullFieldError.checkNotNull(
+                  blobs_url, 'Repository', 'blobs_url'),
+              branches_url:
+                  BuiltValueNullFieldError.checkNotNull(branches_url, 'Repository', 'branches_url'),
               collaborators_url: BuiltValueNullFieldError.checkNotNull(collaborators_url, 'Repository', 'collaborators_url'),
               comments_url: BuiltValueNullFieldError.checkNotNull(comments_url, 'Repository', 'comments_url'),
               commits_url: BuiltValueNullFieldError.checkNotNull(commits_url, 'Repository', 'commits_url'),

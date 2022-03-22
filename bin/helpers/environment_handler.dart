@@ -23,7 +23,6 @@ class EnvironmentHandler {
         .transform(utf8.decoder)
         .transform(const LineSplitter());
 
-    try {
       await for (var line in lines) {
         var keyVal = line.split('=');
         if (keyVal.length == 1) {
@@ -34,7 +33,7 @@ class EnvironmentHandler {
           // valor não foi preenchido, alertar usuário para preenchimento
           stdout.writeln('Digite seu ${keyVal[0]}: ');
           final input = stdin.readLineSync();
-          if (input == null) {
+          if (input == null || input.trim().isEmpty) {
             throw Exception(
                 'Você precisa preencher o valor de ${keyVal[0]} no seu arquivo .env !');
           }
@@ -44,9 +43,6 @@ class EnvironmentHandler {
           varsFromFile[keyVal[0]] = keyVal[1].trim();
         }
       }
-    } catch (e) {
-      throw Exception('Ocorreu um erro ao processar seu arquivo $filePath: $e');
-    }
 
     // verifica se as chaves obrigatórias estão presentes
     if (varsFromFile.containsValue(false)) {
