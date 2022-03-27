@@ -38,9 +38,10 @@ void main() async {
   while (true) {
     var input = stdin.readLineSync();
     if (input == null || input.isEmpty) {
-      showCommands();
       continue;
     }
+    clear();
+    showAuthUser(user);
     int? isNumber = int.tryParse(input);
     if (isNumber != null) {
       if (!browsingIssues) {
@@ -63,6 +64,7 @@ void main() async {
     } else {
       browsingIssues = false;
     }
+    breadCrumbs.add(input);
     switch (input) {
       case '':
         showCommands();
@@ -73,6 +75,9 @@ void main() async {
       case 'q':
         finishExecution();
         break;
+      case 'help':
+        showCommands();
+        break;
     }
   }
 }
@@ -82,14 +87,22 @@ void finishExecution() {
   exit(0);
 }
 
+// saves current user command depth
+List<String> breadCrumbs = [];
 // define possible commands
 Map<String, String> commands = {
   'q': 'Finalizar programa',
   'repos': 'Mostrar listagem de repositórios',
+  'help': 'Mostrar comandos disponíveis'
 };
 void showCommands() {
   stdout.writeln('Comandos disponíveis:');
   commands.forEach((key, value) {
     stdout.writeln('$key: $value');
   });
+}
+
+void clear() {
+  // source https://stackoverflow.com/a/21275519
+  print(Process.runSync("clear", [], runInShell: true).stdout);
 }

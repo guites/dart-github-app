@@ -15,7 +15,6 @@ Repository? showRepositoryInfo(List<Repository> repos, String input) {
     int index = int.parse(filteredInput);
     final Repository repo = repos[index - 1];
     // send formatted output
-    stdout.writeln('-' * (repo.full_name.length + 12));
     stdout.writeln('\nRepositório ${repo.full_name}\n');
     stdout.writeln('Página no GitHub: ${repo.html_url}\n');
     stdout.writeln(
