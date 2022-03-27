@@ -19,7 +19,6 @@ late String clientSecret;
 String sentScopes = 'repo';
 String authorizationUrl =
     'https://github.com/login/oauth/authorize?scope=$sentScopes&client_id=';
-
 void main() async {
   final EnvironmentHandler env =
       await EnvironmentHandler.loadEnv('.env', requiredKeys);
@@ -31,14 +30,66 @@ void main() async {
   await serverHandler.handleRequests(server);
   final TokenModel token = UniqueToken.instance.tokenModel();
   final User user = await getAuthenticatedUser(token);
-  showAuthUser(user);
   List<Repository> repos = await getUserRepositories(token);
-  showUserRepositories(repos);
+  showAuthUser(user);
+  showCommands();
+  bool browsingIssues = false;
+  late List<Issue> issues;
   while (true) {
-    final Repository? repo = showRepositoryInfo(repos);
-    if (repo != null) {
-      List<Issue> issues = await getIssuesFromRepo(token, repo);
-      showRepositoryIssues(issues);
+    var input = stdin.readLineSync();
+    if (input == null || input.isEmpty) {
+      showCommands();
+      continue;
+    }
+    int? isNumber = int.tryParse(input);
+    if (isNumber != null) {
+      if (!browsingIssues) {
+        // user is using numbers to select repository
+        final Repository? repo = showRepositoryInfo(repos, input);
+        if (repo != null) {
+          issues = await getIssuesFromRepo(token, repo);
+          if (issues.isNotEmpty) {
+            showRepositoryIssues(issues);
+          } else {
+            browsingIssues = false;
+          }
+        }
+      } else {
+        // user is selecting between issues
+        stdout.writeln('Selected issue ${isNumber}, options: ${issues.length}');
+        showIssueInfo(issues, isNumber);
+      }
+      browsingIssues = !browsingIssues;
+    } else {
+      browsingIssues = false;
+    }
+    switch (input) {
+      case '':
+        showCommands();
+        break;
+      case 'repos':
+        showUserRepositories(repos);
+        break;
+      case 'q':
+        finishExecution();
+        break;
     }
   }
+}
+
+void finishExecution() {
+  stdout.writeln('Finalizando execução...');
+  exit(0);
+}
+
+// define possible commands
+Map<String, String> commands = {
+  'q': 'Finalizar programa',
+  'repos': 'Mostrar listagem de repositórios',
+};
+void showCommands() {
+  stdout.writeln('Comandos disponíveis:');
+  commands.forEach((key, value) {
+    stdout.writeln('$key: $value');
+  });
 }

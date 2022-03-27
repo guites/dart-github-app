@@ -6,16 +6,11 @@ void showUserRepositories(List<Repository> repos) {
   for (var i = 0; i < repos.length; i++) {
     stdout.writeln('[${i + 1}]: ${repos[i].full_name}');
   }
+  stdout.write('Digite o número do repositório para receber mais informações:');
 }
 
-Repository? showRepositoryInfo(List<Repository> repos) {
-  stdout.write('Digite o número do repositório para receber mais informações:');
-  final input = stdin.readLineSync();
+Repository? showRepositoryInfo(List<Repository> repos, String input) {
   try {
-    if (input == null || input.trim().isEmpty) {
-      throw Exception(
-          'Digite o número à esquerda do repositório que você deseja analisar!');
-    }
     String filteredInput = input.trim().replaceAll(RegExp(r'\[|\]'), '');
     int index = int.parse(filteredInput);
     final Repository repo = repos[index - 1];
