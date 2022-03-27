@@ -1,3 +1,4 @@
+
 # See https://www.dartlang.org/guides/libraries/private-files
 
 # Files and directories created by pub
@@ -28,3 +29,5 @@ doc/api/
 
 # vscode debug config
 .vscode
+# app generated sqlite3 db
+database.sqlite
