@@ -39,9 +39,10 @@ void main() async {
   }
   final User user = await getAuthenticatedUser(token);
   List<Repository> repos = await getUserRepositories(token);
+  clear();
   showAuthUser(user);
   showCommands();
-  
+
   bool browsingIssues = false;
   late List<Issue> issues;
   while (true) {
