@@ -64,7 +64,7 @@ class EnvironmentHandler {
     // sobrescreve valores no arquivo .env
     IOSink sink = envFile.openWrite();
     varsFromFile.forEach((k, v) => {sink.write('$k=$v\n')});
-    sink.close();
+    await sink.close();
 
     return EnvironmentHandler._(varsFromFile);
   }
