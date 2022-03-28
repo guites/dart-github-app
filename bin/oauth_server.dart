@@ -67,11 +67,12 @@ void main() async {
                 'Repositório não encontrado! Por favor, digite um número de 1 a ${repos.length}!');
             continue;
           }
-          final Repository repo = repos[isNumber - 1];
+          // final Repository repo = repos[isNumber - 1];
+          currentRepository = repos[isNumber - 1];
           breadCrumbs.add('Detalhes');
           showBreadCrumbs();
-          showRepositoryInfo(repo);
-          issues = await getIssuesFromRepo(token, repo);
+          showRepositoryInfo(currentRepository);
+          issues = await getIssuesFromRepo(token, currentRepository);
           if (issues.isNotEmpty) {
             showRepositoryIssues(issues);
           }
@@ -95,6 +96,12 @@ void main() async {
         case 'Issues':
           breadCrumbs.removeLast();
           showBreadCrumbs();
+          showRepositoryInfo(currentRepository);
+          issues = await getIssuesFromRepo(token, currentRepository);
+          if (issues.isNotEmpty) {
+            showRepositoryIssues(issues);
+          }
+          continue;
       }
     }
 
@@ -116,6 +123,9 @@ void finishExecution() {
   exit(0);
 }
 
+// saves current repository
+late Repository currentRepository;
+
 // saves current user command depth
 List<String> breadCrumbs = [];
 void showBreadCrumbs() {
@@ -128,6 +138,7 @@ Map<String, String> commands = {
   'repos': 'Mostrar listagem de repositórios',
   'b': 'Voltar à tela anterior'
 };
+
 void showCommands() {
   stdout.writeln('Comandos disponíveis:');
   commands.forEach((key, value) {
