@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart';
 import '../models/token_model.dart';
+import 'database_handler.dart';
 
 class ServerHandler {
   final String _clientId;
@@ -92,6 +93,7 @@ class ServerHandler {
 
         if (tokenObject.containsKey('access_token')) {
           UniqueToken.instance.tokenModel(tokenObject);
+          SqliteHelper.saveToken(tokenRequest.body);
           request.response
             ..write('''
             <h1> Autenticação realizada com sucesso! </h1>

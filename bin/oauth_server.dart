@@ -1,3 +1,4 @@
+import 'helpers/database_handler.dart';
 import 'helpers/environment_handler.dart';
 import 'helpers/browser_handler.dart';
 import 'helpers/server_handler.dart';
@@ -20,19 +21,28 @@ String sentScopes = 'repo';
 String authorizationUrl =
     'https://github.com/login/oauth/authorize?scope=$sentScopes&client_id=';
 void main() async {
+  //TODO: #1 when the app errors out just after this step, the .env file is cleared!
   final EnvironmentHandler env =
       await EnvironmentHandler.loadEnv('.env', requiredKeys);
   clientId = env.getVar('GITHUB_CLIENT_ID');
   clientSecret = env.getVar('GITHUB_CLIENT_SECRET');
-  final ServerHandler serverHandler = ServerHandler(clientId, clientSecret);
-  final HttpServer server = await serverHandler.createServer();
-  BrowserHandler.launchBrowser('$authorizationUrl$clientId');
-  await serverHandler.handleRequests(server);
-  final TokenModel token = UniqueToken.instance.tokenModel();
+  SqliteHelper.setup();
+  late TokenModel? token;
+  token = SqliteHelper.getToken();
+  if (token == null) {
+    // no token in database, start regular authentication process
+    final ServerHandler serverHandler = ServerHandler(clientId, clientSecret);
+    final HttpServer server = await serverHandler.createServer();
+    BrowserHandler.launchBrowser('$authorizationUrl$clientId');
+    await serverHandler.handleRequests(server);
+    token = UniqueToken.instance.tokenModel();
+  }
   final User user = await getAuthenticatedUser(token);
   List<Repository> repos = await getUserRepositories(token);
+  clear();
   showAuthUser(user);
   showCommands();
+
   bool browsingIssues = false;
   late List<Issue> issues;
   while (true) {

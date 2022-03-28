@@ -6,3 +6,4 @@ dependencies:
   http: ^0.13.4
   build_runner: ^2.1.7
   built_value_generator: ^8.1.4
+  sqlite3: ^1.6.0
