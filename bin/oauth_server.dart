@@ -52,41 +52,60 @@ void main() async {
     }
     clear();
     showAuthUser(user);
-    int? isNumber = int.tryParse(input);
-    if (isNumber != null) {
-      if (!browsingIssues) {
-        // user is using numbers to select repository
-        final Repository? repo = showRepositoryInfo(repos, input);
-        if (repo != null) {
+    showCommands();
+    if (breadCrumbs.isNotEmpty) {
+      switch (breadCrumbs.last) {
+        case 'Repositórios':
+          int? isNumber = int.tryParse(input);
+          if (isNumber == null) {
+            stdout
+                .writeln('Por favor, digite um número de 1 a ${repos.length}!');
+            continue;
+          }
+          if (isNumber > repos.length) {
+            stderr.writeln(
+                'Repositório não encontrado! Por favor, digite um número de 1 a ${repos.length}!');
+            continue;
+          }
+          final Repository repo = repos[isNumber - 1];
+          breadCrumbs.add('Detalhes');
+          showBreadCrumbs();
+          showRepositoryInfo(repo);
           issues = await getIssuesFromRepo(token, repo);
           if (issues.isNotEmpty) {
             showRepositoryIssues(issues);
-          } else {
-            browsingIssues = false;
           }
-        }
-      } else {
-        // user is selecting between issues
-        stdout.writeln('Selected issue ${isNumber}, options: ${issues.length}');
-        showIssueInfo(issues, isNumber);
+          continue;
+        case 'Detalhes':
+          int? isNumber = int.tryParse(input);
+          if (isNumber == null) {
+            stdout.writeln(
+                'Por favor, digite um número de 1 a ${issues.length}!');
+            continue;
+          }
+          if (isNumber > issues.length) {
+            stderr.writeln(
+                'Repositório não encontrado! Por favor, digite um número de 1 a ${issues.length}!');
+            continue;
+          }
+          breadCrumbs.add('Issues');
+          showBreadCrumbs();
+          showIssueInfo(issues, isNumber);
+          continue;
+        case 'Issues':
+          breadCrumbs.removeLast();
+          showBreadCrumbs();
       }
-      browsingIssues = !browsingIssues;
-    } else {
-      browsingIssues = false;
     }
-    breadCrumbs.add(input);
+
     switch (input) {
-      case '':
-        showCommands();
-        break;
       case 'repos':
+        breadCrumbs.add('Repositórios');
+        showBreadCrumbs();
         showUserRepositories(repos);
         break;
       case 'q':
         finishExecution();
-        break;
-      case 'help':
-        showCommands();
         break;
     }
   }
@@ -99,16 +118,25 @@ void finishExecution() {
 
 // saves current user command depth
 List<String> breadCrumbs = [];
+void showBreadCrumbs() {
+  stdout.writeln(breadCrumbs.join(' > '));
+}
+
 // define possible commands
 Map<String, String> commands = {
   'q': 'Finalizar programa',
   'repos': 'Mostrar listagem de repositórios',
-  'help': 'Mostrar comandos disponíveis'
+  'b': 'Voltar à tela anterior'
 };
 void showCommands() {
   stdout.writeln('Comandos disponíveis:');
   commands.forEach((key, value) {
-    stdout.writeln('$key: $value');
+    if (key == commands.keys.last) {
+      stdout.write('$key: $value');
+      stdout.writeln();
+    } else {
+      stdout.write('$key: $value; ');
+    }
   });
 }
 

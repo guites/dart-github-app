@@ -9,11 +9,8 @@ void showUserRepositories(List<Repository> repos) {
   stdout.write('Digite o número do repositório para receber mais informações:');
 }
 
-Repository? showRepositoryInfo(List<Repository> repos, String input) {
+void  showRepositoryInfo(Repository repo) {
   try {
-    String filteredInput = input.trim().replaceAll(RegExp(r'\[|\]'), '');
-    int index = int.parse(filteredInput);
-    final Repository repo = repos[index - 1];
     // send formatted output
     stdout.writeln('\nRepositório ${repo.full_name}\n');
     stdout.writeln('Página no GitHub: ${repo.html_url}\n');
@@ -29,16 +26,7 @@ Repository? showRepositoryInfo(List<Repository> repos, String input) {
     if (repo.language != null) {
       stdout.writeln('Linguagem: ${repo.language}\n');
     }
-    return repo;
-  } on FormatException {
-    stderr.writeln('Por favor, digite um número de 1 a ${repos.length}!');
-    return null;
-  } on RangeError {
-    stderr.writeln(
-        'Repositório não encontrado! Por favor, digite um número de 1 a ${repos.length}!');
-    return null;
   } catch (e) {
     stderr.writeln(e);
-    return null;
   }
 }
